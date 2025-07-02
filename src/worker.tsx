@@ -6,7 +6,8 @@ import { setCommonHeaders } from "@/app/headers";
 import { userRoutes } from "@/app/pages/user/routes";
 import { sessions, setupSessionStore } from "./session/store";
 import { Session } from "./session/durableObject";
-import { type User, db, setupDb } from "@/db";
+import { db, setupDb } from "./db";
+import type { User } from "@prisma/client";
 import { env } from "cloudflare:workers";
 export { SessionDurableObject } from "./session/durableObject";
 
@@ -59,5 +60,7 @@ export default defineApp([
       Home,
     ]),
     prefix("/user", userRoutes),
+    route("/legal/privacy", () => <h1>Privacy Policy</h1>),
+    route("/legal/terms", () => <h1>Terms of Service</h1>),
   ]),
 ]);
