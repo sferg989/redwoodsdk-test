@@ -5,15 +5,10 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../node_modules/.prisma/client"
 
-  runtime                = "workerd"
-  moduleFormat           = "esm"
-  generatedFileExtension = "ts"
-  importFileExtension    = "ts"
-
-  output          = "../generated/prisma"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
 }
 
 datasource db {
@@ -61,6 +56,8 @@ model Contact {
   lastName  String
   email     String?
   role      String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   companyId String?
   company   Company?  @relation(fields: [companyId], references: [id])
   createdAt DateTime  @default(now())
@@ -69,7 +66,7 @@ model Contact {
 
 model Credential {
   id            String   @id @default(uuid()) // Internal DB ID
-  userId        String   @unique // Each user has one discoverable credential
+  userId        String   @unique // Every credential is linked to a specific user
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
   credentialId  String   @unique // WebAuthn credential identifier
@@ -81,10 +78,10 @@ model Credential {
 }
 
 model User {
-  id                 String        @id @default(uuid())
-  username           String        @unique
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime?     @updatedAt
+  id          String      @id @default(uuid()) // User ID (UUID-based)
+  username    String      @unique
+  createdAt   DateTime    @default(now())
+  contacts    Contact[]
   applications       Application[]
-  credentials        Credential[]
+  credentials Credential[] // Relationship: One user can have many credentials
 }
