@@ -49,6 +49,7 @@ const Edit = async ({ params, ctx }: RequestInfo) => {
           Edit the details of this job application.
         </p>
       </div>
+      {/* @ts-ignore */}
       <EditApplicationForm statuses={statuses} application={application} />
     </InteriorLayout>
   );
